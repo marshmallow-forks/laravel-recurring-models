@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Carbon;
-use MohammedManssour\LaravelRecurringModels\Models\Repetition;
 use MohammedManssour\LaravelRecurringModels\Tests\Stubs\Support\HasTask;
 use MohammedManssour\LaravelRecurringModels\Tests\TestCase;
 
@@ -17,13 +16,13 @@ class RepetitionTest extends TestCase
         // repeat start at 2023-04-15 00:00:00 and ends at 2023-04-15
         $repetition = $this->repetition($this->task(), '2023-04-30');
 
-        $this->assertNull(Repetition::query()->whereActiveForTheDate(Carbon::make('2023-04-14 00:00:00'))->first());
+        $this->assertNull(config('recurring-models.models.repetition')::query()->whereActiveForTheDate(Carbon::make('2023-04-14 00:00:00'))->first());
 
-        $this->assertNull(Repetition::query()->whereActiveForTheDate(Carbon::make('2023-05-01 00:00:00'))->first());
+        $this->assertNull(config('recurring-models.models.repetition')::query()->whereActiveForTheDate(Carbon::make('2023-05-01 00:00:00'))->first());
 
         $activeTestDates = ['2023-04-15', '2023-04-16', '2023-04-30'];
         foreach ($activeTestDates as $date) {
-            $model = Repetition::query()->whereActiveForTheDate(Carbon::make("{$date} 00:00:00"))->first();
+            $model = config('recurring-models.models.repetition')::query()->whereActiveForTheDate(Carbon::make("{$date} 00:00:00"))->first();
             $this->assertTrue($model->is($repetition));
         }
     }
@@ -34,36 +33,36 @@ class RepetitionTest extends TestCase
         // repeat start at 2023-04-15 00:00:00
         $repetition = $this->repetition($this->task());
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-10 00:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-10 00:00:00'))->first();
         $this->assertNull($model);
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-20 23:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-20 23:00:00'))->first();
         $this->assertTrue($repetition->is($model));
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-16 23:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-16 23:00:00'))->first();
         $this->assertFalse($repetition->is($model));
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-17 23:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-17 23:00:00'))->first();
         $this->assertFalse($repetition->is($model));
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-18 23:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-18 23:00:00'))->first();
         $this->assertFalse($repetition->is($model));
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-19 23:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-19 23:00:00'))->first();
         $this->assertFalse($repetition->is($model));
 
         // ensure the day no matter what the hour is. usefull when handling timezones
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-20 23:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-20 23:00:00'))->first();
         $this->assertTrue($repetition->is($model));
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-25 00:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-25 00:00:00'))->first();
         $this->assertTrue($repetition->is($model));
 
         $date = Carbon::make('2023-04-25 00:00:00');
-        $model = Repetition::whereHasSimpleRecurringOn($date)->first();
+        $model = config('recurring-models.models.repetition')::whereHasSimpleRecurringOn($date)->first();
         $this->assertTrue($repetition->is($model));
 
-        $this->assertNull(Repetition::whereHasComplexRecurringOn($date)->first());
+        $this->assertNull(config('recurring-models.models.repetition')::whereHasComplexRecurringOn($date)->first());
     }
 
     /** @test */
@@ -77,14 +76,14 @@ class RepetitionTest extends TestCase
         $this->task()->repeat()->everyNDays(2);
         $repetition = $this->task()->repetitions->first();
 
-        $model = Repetition::whereOccurresOn(now()->addDays(2))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(now()->addDays(2))->first();
         $this->assertTrue($model->is($repetition));
 
         // using different timezone will yield to the same repetition model because repetition data is saved/calculated in utc
-        $model = Repetition::whereOccurresOn(now()->addDays(2)->setTimezone('Asia/Riyadh'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(now()->addDays(2)->setTimezone('Asia/Riyadh'))->first();
         $this->assertTrue($model->is($repetition));
 
-        $model = Repetition::whereOccurresOn(now()->addDays(3)->setTimezone('Asia/Riyadh'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(now()->addDays(3)->setTimezone('Asia/Riyadh'))->first();
         $this->assertNull($model);
     }
 
@@ -93,7 +92,7 @@ class RepetitionTest extends TestCase
     {
         $this->repetition($this->task(), '2023-04-23 00:00:00');
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-25 00:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-25 00:00:00'))->first();
         $this->assertNull($model);
     }
 
@@ -103,14 +102,14 @@ class RepetitionTest extends TestCase
         // repeat start at 2023-04-15 00:00:00
         $repetition = $this->repetition($this->task());
 
-        $model = Repetition::whereOccurresBetween(
+        $model = config('recurring-models.models.repetition')::whereOccurresBetween(
             Carbon::make('2023-04-20 00:00:00'),
             Carbon::make('2023-04-25 00:00:00'),
         )->first();
         $this->assertTrue($repetition->is($model));
 
         $this->assertFalse(
-            Repetition::whereOccurresBetween(
+            config('recurring-models.models.repetition')::whereOccurresBetween(
                 Carbon::make('2023-04-10 00:00:00'),
                 Carbon::make('2023-04-14 00:00:00'),
             )
@@ -126,26 +125,26 @@ class RepetitionTest extends TestCase
         );
 
         // repeats on second Friday of the month
-        $repetition = Repetition::factory()
+        $repetition = config('recurring-models.models.repetition')::factory()
             ->morphs($this->task())
             ->complex(weekOfMonth: 2, weekday: Carbon::FRIDAY)
             ->starts($this->task()->repetitionBaseDate())
             ->create();
 
         $date = new Carbon('2023-05-12 00:00:00');
-        $model = Repetition::whereOccurresOn($date)->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn($date)->first();
         $this->assertTrue($model->is($repetition));
 
         $date = Carbon::make('2023-06-09');
-        $model = Repetition::whereOccurresOn($date)->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn($date)->first();
         $this->assertTrue($model->is($repetition));
 
-        $model = Repetition::whereHasComplexRecurringOn($date)->first();
+        $model = config('recurring-models.models.repetition')::whereHasComplexRecurringOn($date)->first();
         $this->assertTrue($model->is($repetition));
 
-        $this->assertNull(Repetition::whereHasSimpleRecurringOn($date)->first());
-        $this->assertNull(Repetition::whereOccurresOn(Carbon::make('2023-05-05'))->first());
-        $this->assertNull(Repetition::whereOccurresOn(Carbon::make('2023-05-19'))->first());
+        $this->assertNull(config('recurring-models.models.repetition')::whereHasSimpleRecurringOn($date)->first());
+        $this->assertNull(config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-05-05'))->first());
+        $this->assertNull(config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-05-19'))->first());
     }
 
     /** @test */
@@ -157,7 +156,7 @@ class RepetitionTest extends TestCase
         );
 
         // repeats on second Friday of the month
-        $repetition = Repetition::factory()
+        $repetition = config('recurring-models.models.repetition')::factory()
             ->morphs($this->task())
             ->complex(weekOfMonth: 2, weekday: Carbon::FRIDAY)
             ->starts($this->task()->repetitionBaseDate())
@@ -166,18 +165,18 @@ class RepetitionTest extends TestCase
             ]);
 
         $date = new Carbon('2023-05-12 00:00:00');
-        $model = Repetition::whereOccurresOn($date)->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn($date)->first();
         $this->assertTrue($model->is($repetition));
 
         $date = Carbon::make('2023-06-09');
-        $model = Repetition::whereOccurresOn($date)->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn($date)->first();
         $this->assertTrue($model->is($repetition));
 
-        $model = Repetition::whereHasComplexRecurringOn($date)->first();
+        $model = config('recurring-models.models.repetition')::whereHasComplexRecurringOn($date)->first();
         $this->assertTrue($model->is($repetition));
 
-        $this->assertNull(Repetition::whereHasSimpleRecurringOn($date)->first());
-        $this->assertNull(Repetition::whereOccurresOn(Carbon::make('2023-05-05'))->first());
-        $this->assertNull(Repetition::whereOccurresOn(Carbon::make('2023-05-19'))->first());
+        $this->assertNull(config('recurring-models.models.repetition')::whereHasSimpleRecurringOn($date)->first());
+        $this->assertNull(config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-05-05'))->first());
+        $this->assertNull(config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-05-19'))->first());
     }
 }

@@ -6,7 +6,6 @@ use Carbon\CarbonInterface as Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use MohammedManssour\LaravelRecurringModels\Enums\RepetitionType;
-use MohammedManssour\LaravelRecurringModels\Models\Repetition;
 use MohammedManssour\LaravelRecurringModels\Support\Repeat;
 
 /**
@@ -19,7 +18,7 @@ trait Repeatable
     -----------------------------------------------------*/
     public function repetitions(): MorphMany
     {
-        return $this->morphMany(Repetition::class, 'repeatable');
+        return $this->morphMany(config('recurring-models.models.repetition'), 'repeatable');
     }
 
     /*-----------------------------------------------------

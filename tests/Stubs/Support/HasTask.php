@@ -2,7 +2,6 @@
 
 namespace MohammedManssour\LaravelRecurringModels\Tests\Stubs\Support;
 
-use MohammedManssour\LaravelRecurringModels\Models\Repetition;
 use MohammedManssour\LaravelRecurringModels\Tests\Stubs\Models\Task;
 
 trait HasTask
@@ -11,7 +10,7 @@ trait HasTask
 
     public function task(): Task
     {
-        if (! isset($this->task)) {
+        if (!isset($this->task)) {
             $this->task = Task::create(['title' => fake()->words(asText: true)]);
         }
 
@@ -20,7 +19,7 @@ trait HasTask
 
     public function repetition(Task $task, $end_at = null)
     {
-        $factory = Repetition::factory()
+        $factory = config('recurring-models.models.repetition')::factory()
             ->morphs($task)
             ->starts('2023-04-15')
             ->interval(5);

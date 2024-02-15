@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Carbon;
-use MohammedManssour\LaravelRecurringModels\Models\Repetition;
 use MohammedManssour\LaravelRecurringModels\Tests\Stubs\Models\Task;
 use MohammedManssour\LaravelRecurringModels\Tests\Stubs\Support\HasTask;
 use MohammedManssour\LaravelRecurringModels\Tests\TestCase;
@@ -18,7 +17,7 @@ class RepeatableTest extends TestCase
         $model = Task::whereOccurresOn(Carbon::make('2023-04-20 00:00:00'))->first();
         $this->assertTrue($this->task()->is($model));
 
-        $model = Repetition::whereOccurresOn(Carbon::make('2023-04-25 00:00:00'))->first();
+        $model = config('recurring-models.models.repetition')::whereOccurresOn(Carbon::make('2023-04-25 00:00:00'))->first();
         $this->assertNull($model);
     }
 
